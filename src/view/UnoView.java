@@ -35,13 +35,14 @@ public class UnoView {
     /** Metodos **/
     
     public void start() throws Exception{
-        controlador.iniciarPartida();
-        
         //Agrego los jugadores
         controlador.registrarJugador("David"); //0
         controlador.registrarJugador("Arturo"); //1
         controlador.registrarJugador("Roger"); //2
         controlador.registrarJugador("Blacky"); //3
+        
+        
+        controlador.iniciarPartida();
         
         //Reparto las cartas
         controlador.repartirCartas();

@@ -131,9 +131,11 @@ public class Partida {
             jugadorActual.addCarta(mazo.get(mazo.size() - 1)); //Si el jugador no digita una carta en la mano,
             mazo.remove(mazo.size() - 1);                      //se le da una del mazo
             if(mazo.size() == 0){ //Si se vacía el mazo, se le asignan las cartas de descarte y se "baraja" de nuevo
-                mazo = descarte;
+                mazo.addAll(descarte);
                 Collections.shuffle(mazo);
                 descarte.clear();
+                descarte.add(mazo.get(mazo.size() - 1));
+                mazo.remove(mazo.size() - 1);
             }
             return false;
         }
