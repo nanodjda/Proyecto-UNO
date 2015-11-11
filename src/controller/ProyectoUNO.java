@@ -11,11 +11,17 @@ package controller;
  */
 public class ProyectoUNO {
 
+    private static Partida partida;
+    
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+        iniciar();
     }
     
+    private static void iniciar(){
+        partida = Partida.getInstance();
+        partida.startApplication();
+    }
 }
