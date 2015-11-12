@@ -48,12 +48,14 @@ public class Partida {
         vista = new UnoView(this.INSTANCE);
     }
 
-    /** Metodos **/    
-
+    /** Metodos **/
     public static void iniciarPartida(){
         //Creo el mazo y lo desordeno
         mazo = CartasFactory.makeMazo();
-        Collections.shuffle(mazo);
+        do {
+            Collections.shuffle(mazo);
+        } while(mazo.get(mazo.size() - 1) instanceof CartaComodin ||
+                mazo.get(mazo.size() - 1) instanceof CartaComodinTome4);
         
         descarte.add(mazo.get(mazo.size() - 1));
         mazo.remove(mazo.size() - 1);
@@ -61,6 +63,7 @@ public class Partida {
         repartirCartas();
         
     }
+    
     public static void repartirCartas(){
         for(Jugador pJugador : jugadores){
             for(int i = 0; i < TAMANHO_MANO; i++){
@@ -76,19 +79,19 @@ public class Partida {
         jugadorActual = jugadores.get(jugadores.size() - 1);
     }
     
-    public static Carta getCarta(int eleccion){
-        return jugadorActual.getMano().get(eleccion);
-    }
-    
-    public static void cartaUsada(int eleccion){
-        ejecutarCarta(jugadorActual.getMano().get(eleccion));
-        descarte.add(jugadorActual.getMano().get(eleccion));
-        jugadorActual.removeCarta(jugadorActual.getMano().get(eleccion));
-    }
-    
     public static void usarCarta(int eleccion){
         descarte.add(jugadorActual.getMano().get(eleccion));
         jugadorActual.removeCarta(jugadorActual.getMano().get(eleccion));
+    }
+    
+    public static void comprobarMazo(){
+        if(mazo.size() == 0){ //Si se vacía el mazo, se le asignan las cartas de descarte y se "baraja" de nuevo
+            mazo.addAll(descarte);
+            Collections.shuffle(mazo);
+            descarte.clear();
+            descarte.add(mazo.get(mazo.size() - 1));
+            mazo.remove(mazo.size() - 1);
+        }
     }
     
     public static void siguientePierdeTurno(){
@@ -134,13 +137,7 @@ public class Partida {
         } else {
             jugadorActual.addCarta(mazo.get(mazo.size() - 1)); //Si el jugador no digita una carta en la mano,
             mazo.remove(mazo.size() - 1);                      //se le da una del mazo
-            if(mazo.size() == 0){ //Si se vacía el mazo, se le asignan las cartas de descarte y se "baraja" de nuevo
-                mazo.addAll(descarte);
-                Collections.shuffle(mazo);
-                descarte.clear();
-                descarte.add(mazo.get(mazo.size() - 1));
-                mazo.remove(mazo.size() - 1);
-            }
+            comprobarMazo();
             return false;
         }
     }
@@ -166,12 +163,14 @@ public class Partida {
         if(saltarTurno || dosSiguiente || cuatroSiguiente){
             if(dosSiguiente){ //Se realiza solo sobre el jugador al que se le aplica el efecto
                 for(int i = 0; i < 2; i++){
+                    comprobarMazo();
                     jugadorActual.addCarta(mazo.get(mazo.size() - 1));
                     mazo.remove(mazo.get(mazo.size() - 1));
                 }
             }
             if(cuatroSiguiente){ //Se realiza solo sobre el jugador al que se le aplica el efecto
                 for(int i = 0; i < 4; i++){
+                    comprobarMazo();
                     jugadorActual.addCarta(mazo.get(mazo.size() - 1));
                     mazo.remove(mazo.get(mazo.size() - 1));
                 }
@@ -188,7 +187,7 @@ public class Partida {
     }
     
     public void startApplication() throws Exception{
-        vista.start2();
+        vista.start();
     }
     
     /** Getters & setters **/
@@ -205,6 +204,10 @@ public class Partida {
     
     public static Carta getTopeDescarte(){
         return descarte.get(descarte.size() - 1);
+    }
+    
+    public static Carta getCarta(int eleccion){
+        return jugadorActual.getMano().get(eleccion);
     }
     
     public static boolean getGanador(){

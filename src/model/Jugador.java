@@ -15,12 +15,11 @@ import java.util.ArrayList;
  *            Arturo Luna Izaguirre - 2014110993
  */
 
-public class Jugador extends Thread {
+public class Jugador {
 
     /** Variables **/
     private String nombre;
     private ArrayList<Carta> mano = new ArrayList();
-    private Socket socket;
 
     /** Constructor **/
     public Jugador(String pNombre){
