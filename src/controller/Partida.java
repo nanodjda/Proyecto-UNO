@@ -30,7 +30,6 @@ public class Partida {
     private static Logica logica;
     private static UnoView vista;
     
-    
     private static ArrayList<Jugador> jugadores = new ArrayList();
     private static ArrayList<Carta> mazo = new ArrayList();
     private static ArrayList<Carta> descarte = new ArrayList();
@@ -147,39 +146,6 @@ public class Partida {
     }
     
     public static void siguienteJugador(){
-        //Compruebo si se debe revertir el orden
-        if(reversa){
-            Collections.reverse(jugadores);
-        }
-        reversa = false;
-        
-        //Si se activa alguna carta especial se aplica el efecto y se salta al jugador
-        for(int x = 0; x < ((saltarTurno || dosSiguiente || cuatroSiguiente) ? 2 : 1); x++){
-            if(jugadores.indexOf(jugadorActual) == jugadores.size() - 1){
-                jugadorActual = jugadores.get(0);
-            } else {
-                jugadorActual = jugadores.get(jugadores.indexOf(jugadorActual) + 1);
-            }
-            if(x == 0 && dosSiguiente){ //Se realiza solo sobre el jugador al que se le aplica el efecto
-                for(int i = 0; i < 2; i++){
-                    jugadorActual.addCarta(mazo.get(mazo.size() - 1));
-                    mazo.remove(mazo.get(mazo.size() - 1));
-                }
-            }
-            if(x == 0 && cuatroSiguiente){ //Se realiza solo sobre el jugador al que se le aplica el efecto
-                for(int i = 0; i < 4; i++){
-                    jugadorActual.addCarta(mazo.get(mazo.size() - 1));
-                    mazo.remove(mazo.get(mazo.size() - 1));
-                }
-            }
-        }
-        cuatroSiguiente = false;
-        dosSiguiente = false;
-        saltarTurno = false;
-    }
-    
-    public static void siguienteJugador2(){
-        
         //Ejecuto la carta en el tope de descarte
         ejecutarCarta(getTopeDescarte());
         

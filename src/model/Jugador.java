@@ -6,6 +6,7 @@
 
 package model;
 
+import java.net.Socket;
 import java.util.ArrayList;
 
 /**
@@ -14,11 +15,12 @@ import java.util.ArrayList;
  *            Arturo Luna Izaguirre - 2014110993
  */
 
-public class Jugador {
+public class Jugador extends Thread {
 
     /** Variables **/
     private String nombre;
     private ArrayList<Carta> mano = new ArrayList();
+    private Socket socket;
 
     /** Constructor **/
     public Jugador(String pNombre){
