@@ -44,6 +44,7 @@ public class UnoView {
         
         controlador.iniciarPartida();
         
+        
         //Reparto las cartas
         controlador.repartirCartas();
         
@@ -89,6 +90,64 @@ public class UnoView {
             
             //Se sigue con el siguiente jugador
             controlador.siguienteJugador();
+        }
+        
+        System.out.println("\nEl ganador es: " + controlador.getJugadorActual().getNombre());
+    }
+    
+    public void start2() throws Exception{
+        //Agrego los jugadores
+        controlador.registrarJugador("David"); //0
+        controlador.registrarJugador("Arturo"); //1
+        controlador.registrarJugador("Roger"); //2
+        controlador.registrarJugador("Blacky"); //3
+        
+        
+        controlador.iniciarPartida();
+        
+        System.out.println("Empieza la partida!!\n");
+        
+        while(true){
+            
+            //Se sigue con el siguiente jugador
+            controlador.siguienteJugador2();
+            
+            contador = 1;
+            System.out.println("\nEl turno de: " + controlador.getJugadorActual().getNombre());
+            while(true){
+                try {
+                    System.out.println("\nMazo de Descarte: \nTexto -> " + controlador.getTopeDescarte().getTexto()
+                            + " Color -> " + controlador.getTopeDescarte().getColor());
+                    System.out.println("\nTus cartas:");
+                    for(Carta pCarta : controlador.getJugadorActual().getMano()){
+                        System.out.println(contador + " - Texto-> " + pCarta.getTexto() + " Color-> " + pCarta.getColor());
+                        contador++;
+                    }
+                    System.out.println("X - Cualquier otro número para tomar una del mazo!");
+                    System.out.print("\nEscoge la carta: ");
+                    eleccion = leer.nextInt() - 1;
+                    if(controlador.validarEleccion(eleccion)){
+                        break;
+                    }
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+                contador = 1;
+            }
+            
+            // Si es una carta comodín se le pide al usuario cual color debe seguir
+            if(controlador.getCarta(eleccion) instanceof CartaComodin || 
+               controlador.getCarta(eleccion) instanceof CartaComodinTome4){
+                controlador.escogerColor(controlador.getCarta(eleccion), cartaComodin());
+            }
+            
+            //Se acciona la carta usada
+            controlador.usarCarta(eleccion);
+            
+            //Se chequea si hay ganador
+            if(controlador.getGanador()){
+                break;
+            }
         }
         
         System.out.println("\nEl ganador es: " + controlador.getJugadorActual().getNombre());

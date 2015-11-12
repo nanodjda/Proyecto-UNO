@@ -16,11 +16,11 @@ public class ProyectoUNO {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         iniciar();
     }
     
-    private static void iniciar(){
+    private static void iniciar() throws Exception{
         partida = Partida.getInstance();
         partida.startApplication();
     }

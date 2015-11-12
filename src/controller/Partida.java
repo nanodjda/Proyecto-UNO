@@ -59,6 +59,8 @@ public class Partida {
         descarte.add(mazo.get(mazo.size() - 1));
         mazo.remove(mazo.size() - 1);
         
+        repartirCartas();
+        
     }
     public static void repartirCartas(){
         for(Jugador pJugador : jugadores){
@@ -72,9 +74,7 @@ public class Partida {
     public static void registrarJugador(String pNombre){
         Jugador nuevo = new Jugador(pNombre);
         jugadores.add(nuevo);
-        if(jugadores.size() == 1){
-            jugadorActual = jugadores.get(0);  //Defino al primer jugador registrado como el jugador actual
-        }
+        jugadorActual = jugadores.get(jugadores.size() - 1);
     }
     
     public static Carta getCarta(int eleccion){
@@ -83,6 +83,11 @@ public class Partida {
     
     public static void cartaUsada(int eleccion){
         ejecutarCarta(jugadorActual.getMano().get(eleccion));
+        descarte.add(jugadorActual.getMano().get(eleccion));
+        jugadorActual.removeCarta(jugadorActual.getMano().get(eleccion));
+    }
+    
+    public static void usarCarta(int eleccion){
         descarte.add(jugadorActual.getMano().get(eleccion));
         jugadorActual.removeCarta(jugadorActual.getMano().get(eleccion));
     }
@@ -139,9 +144,6 @@ public class Partida {
             }
             return false;
         }
-        
-        
-        
     }
     
     public static void siguienteJugador(){
@@ -176,8 +178,51 @@ public class Partida {
         saltarTurno = false;
     }
     
+    public static void siguienteJugador2(){
+        
+        //Ejecuto la carta en el tope de descarte
+        ejecutarCarta(getTopeDescarte());
+        
+        //Compruebo si se debe revertir el orden
+        if(reversa){
+            Collections.reverse(jugadores);
+        }
+        reversa = false;
+        
+        //Se cambia al siguiente jugador
+        if(jugadores.indexOf(jugadorActual) == jugadores.size() - 1){
+            jugadorActual = jugadores.get(0);
+        } else {
+            jugadorActual = jugadores.get(jugadores.indexOf(jugadorActual) + 1);
+        }
+        
+        //Si se activa alguna carta especial se aplica el efecto y se salta al jugador
+        if(saltarTurno || dosSiguiente || cuatroSiguiente){
+            if(dosSiguiente){ //Se realiza solo sobre el jugador al que se le aplica el efecto
+                for(int i = 0; i < 2; i++){
+                    jugadorActual.addCarta(mazo.get(mazo.size() - 1));
+                    mazo.remove(mazo.get(mazo.size() - 1));
+                }
+            }
+            if(cuatroSiguiente){ //Se realiza solo sobre el jugador al que se le aplica el efecto
+                for(int i = 0; i < 4; i++){
+                    jugadorActual.addCarta(mazo.get(mazo.size() - 1));
+                    mazo.remove(mazo.get(mazo.size() - 1));
+                }
+            }
+            if(jugadores.indexOf(jugadorActual) == jugadores.size() - 1){
+                jugadorActual = jugadores.get(0);
+            } else {
+                jugadorActual = jugadores.get(jugadores.indexOf(jugadorActual) + 1);
+            }
+        }
+        cuatroSiguiente = false;
+        dosSiguiente = false;
+        saltarTurno = false;
+    }
+    
     public void startApplication() throws Exception{
-        vista.start();
+        vista.start2();
     }
     
     /** Getters & setters **/
