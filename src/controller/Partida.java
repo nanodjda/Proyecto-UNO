@@ -152,7 +152,7 @@ public class Partida {
         }
         reversa = false;
         
-        //Se cambia al siguiente jugador
+        //Se cambia al jugador que tiene el turno
         if(jugadores.indexOf(jugadorActual) == jugadores.size() - 1){
             jugadorActual = jugadores.get(0);
         } else {
