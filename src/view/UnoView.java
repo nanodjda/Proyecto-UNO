@@ -7,10 +7,14 @@
 package view;
 
 import controller.Partida;
+import static controller.Partida.imprimir;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.Scanner;
 import model.Carta;
 import model.CartaComodin;
 import model.CartaComodinTome4;
+import model.Jugador;
 import util.cartasColores;
 
 /**
@@ -62,27 +66,37 @@ public class UnoView {
             //Se sigue con el siguiente jugador
             controlador.siguienteJugador();
             
-            contador = 1;
-            System.out.println("\nEl turno de: " + controlador.getJugadorActual().getNombre());
-            while(true){
-                try {
-                    System.out.println("\nMazo de Descarte: \nTexto -> " + controlador.getTopeDescarte().getTexto()
+            for(Jugador pJugador : controlador.getJugadores()){
+                if(!controlador.getJugadorActual().equals(pJugador)){
+                    controlador.imprimir(pJugador, "\nEl turno de: " + controlador.getJugadorActual().getNombre());
+                    controlador.imprimir(pJugador, "\nMazo de Descarte: \nTexto -> " + controlador.getTopeDescarte().getTexto()
                             + " Color -> " + controlador.getTopeDescarte().getColor());
-                    System.out.println("\nTus cartas:");
-                    for(Carta pCarta : controlador.getJugadorActual().getMano()){
-                        System.out.println(contador + " - Texto-> " + pCarta.getTexto() + " Color-> " + pCarta.getColor());
-                        contador++;
+                } else {
+                    contador = 1;
+                    System.out.println("\nEl turno de: " + controlador.getJugadorActual().getNombre());
+                    while(true){
+                        try {
+                            controlador.imprimir(pJugador, "\nMazo de Descarte: \nTexto -> " + controlador.getTopeDescarte().getTexto()
+                                    + " Color -> " + controlador.getTopeDescarte().getColor());
+                            controlador.imprimir(pJugador, "\nTus cartas:");
+                            for(Carta pCarta : controlador.getJugadorActual().getMano()){
+                                controlador.imprimir(pJugador, contador + " - Texto-> " + pCarta.getTexto() + " Color-> " + pCarta.getColor());
+                                contador++;
+                            }
+                            controlador.imprimir(pJugador, "X - Cualquier otro número para tomar una del mazo!");
+                            controlador.imprimir(pJugador, "\nEscoge la carta: ");
+                            BufferedReader clientIn = new BufferedReader(
+                                    new InputStreamReader(controlador.getJugadorActual().getSocket().getInputStream()));
+                            eleccion = Integer.parseInt(clientIn.readLine()) - 1;
+                            if(controlador.validarEleccion(eleccion)){
+                                break;
+                            }
+                        } catch (Exception e) {
+                            controlador.imprimir(controlador.getJugadorActual(), e.getMessage());
+                        }
+                        contador = 1;
                     }
-                    System.out.println("X - Cualquier otro número para tomar una del mazo!");
-                    System.out.print("\nEscoge la carta: ");
-                    eleccion = leer.nextInt() - 1;
-                    if(controlador.validarEleccion(eleccion)){
-                        break;
-                    }
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
                 }
-                contador = 1;
             }
             
             // Si es una carta comodín se le pide al usuario cual color debe seguir

@@ -247,6 +247,10 @@ public class Partida {
         return false;
     }
     
+    public static ArrayList<Jugador> getJugadores(){
+        return jugadores;
+    }
+    
     public static int cantJugadores(){
         return jugadores.size();
     }
