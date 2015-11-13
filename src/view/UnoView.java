@@ -36,9 +36,23 @@ public class UnoView {
     
     public void start() throws Exception{
         //Agrego los jugadores
-        
-        controlador.registrarJugador();
-        controlador.registrarJugador();
+        do{
+            System.out.println("Esperando a los jugadores...");
+            System.out.println("Cantidad agregados: " + controlador.cantJugadores());
+            controlador.registrarJugador();
+            if(controlador.cantJugadores() > 1 && controlador.cantJugadores() != 4){
+                System.out.println("Iniciar ya? (Y/N)");
+                String opc = leer.nextLine();
+                if(opc.equals("Y")){
+                    break;
+                } else if(opc.equals("N")){
+                } else {
+                    System.out.println("Debe escoger una opción válida");
+                }
+            } else if(controlador.cantJugadores() == 4){
+                break;
+            }
+        } while(controlador.cantJugadores() < 4);
         
         controlador.iniciarPartida();
         

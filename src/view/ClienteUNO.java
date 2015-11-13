@@ -34,19 +34,11 @@ public class ClienteUNO {
                     new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(), true);
             String mensaje;
-            
-            System.out.println("Digite el nombre de jugador; ");
-            
+            System.out.println(in.readLine());
             
             while(true){
-                while(true){
-                    mensaje = in.readLine();
-                    if(mensaje == null){
-                        break;
-                    }
-                    System.out.println(mensaje);
-                }
-                out.println(leer.nextLine());
+                String palabra = leer.nextLine();
+                out.println(palabra);
             }
         } catch (IOException ex) {
             System.out.println(ex);

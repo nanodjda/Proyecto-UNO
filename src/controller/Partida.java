@@ -10,7 +10,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collections;
 import model.Carta;
@@ -102,6 +101,7 @@ public class Partida {
                     new InputStreamReader(nuevo.getSocket().getInputStream()));
             imprimir(nuevo, "Digite el nombre de jugador: ");
             nuevo.setNombre(clientIn.readLine());
+            System.out.println("Se agregó el siguiente jugador: " + nuevo.getNombre());
             jugadores.add(nuevo);
             jugadorActual = jugadores.get(jugadores.size() - 1);
         } catch (Exception e) {
