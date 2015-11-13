@@ -20,10 +20,11 @@ public class Jugador {
     /** Variables **/
     private String nombre;
     private ArrayList<Carta> mano = new ArrayList();
+    private Socket socket;
 
     /** Constructor **/
-    public Jugador(String pNombre){
-        nombre = pNombre;
+    public Jugador(){
+        socket = new Socket();
     }
 
     /** Metodos **/
@@ -47,5 +48,13 @@ public class Jugador {
     
     public void removeCarta(Carta pCarta) {
         this.mano.remove(pCarta);
+    }
+
+    public Socket getSocket() {
+        return socket;
+    }
+
+    public void setSocket(Socket socket) {
+        this.socket = socket;
     }
 }

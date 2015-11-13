@@ -6,11 +6,17 @@
 
 package controller;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collections;
 import model.Carta;
 import model.CartaComodin;
 import model.CartaComodinTome4;
+import model.CartaReversa;
 import model.CartasFactory;
 import model.Jugador;
 import model.Logica;
@@ -41,9 +47,15 @@ public class Partida {
     private static Boolean cuatroSiguiente = false;
     
     private static int TAMANHO_MANO = 7;
+    private static ServerSocket server;
     
     /** Constructor **/
     private Partida(){
+        try {
+            server = new ServerSocket(7778);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
         logica = new Logica();
         vista = new UnoView(this.INSTANCE);
     }
@@ -55,13 +67,13 @@ public class Partida {
         do {
             Collections.shuffle(mazo);
         } while(mazo.get(mazo.size() - 1) instanceof CartaComodin ||
-                mazo.get(mazo.size() - 1) instanceof CartaComodinTome4);
+                mazo.get(mazo.size() - 1) instanceof CartaComodinTome4 ||
+                mazo.get(mazo.size() - 1) instanceof CartaReversa);
         
         descarte.add(mazo.get(mazo.size() - 1));
         mazo.remove(mazo.size() - 1);
         
         repartirCartas();
-        
     }
     
     public static void repartirCartas(){
@@ -73,10 +85,28 @@ public class Partida {
         }
     }
     
-    public static void registrarJugador(String pNombre){
-        Jugador nuevo = new Jugador(pNombre);
-        jugadores.add(nuevo);
-        jugadorActual = jugadores.get(jugadores.size() - 1);
+    public static void imprimir(Jugador pJugador, String pMensaje){
+        try {
+            PrintWriter clientOut = new PrintWriter(pJugador.getSocket().getOutputStream(), true);
+            clientOut.println(pMensaje);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+    
+    public static void registrarJugador(){
+        try {
+            Jugador nuevo = new Jugador();
+            nuevo.setSocket(server.accept());
+            BufferedReader clientIn = new BufferedReader(
+                    new InputStreamReader(nuevo.getSocket().getInputStream()));
+            imprimir(nuevo, "Digite el nombre de jugador: ");
+            nuevo.setNombre(clientIn.readLine());
+            jugadores.add(nuevo);
+            jugadorActual = jugadores.get(jugadores.size() - 1);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
     
     public static void usarCarta(int eleccion){
@@ -215,5 +245,9 @@ public class Partida {
             return true;
         }
         return false;
+    }
+    
+    public static int cantJugadores(){
+        return jugadores.size();
     }
 }

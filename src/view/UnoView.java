@@ -36,17 +36,15 @@ public class UnoView {
     
     public void start() throws Exception{
         //Agrego los jugadores
-        controlador.registrarJugador("David"); //0
-        controlador.registrarJugador("Arturo"); //1
-        controlador.registrarJugador("Roger"); //2
-        controlador.registrarJugador("Blacky"); //3
+        
+        controlador.registrarJugador();
+        controlador.registrarJugador();
         
         controlador.iniciarPartida();
         
         System.out.println("Empieza la partida!!\n");
         
         while(true){
-            
             //Se sigue con el siguiente jugador
             controlador.siguienteJugador();
             
