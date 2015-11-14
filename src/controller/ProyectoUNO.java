@@ -6,8 +6,9 @@
 package controller;
 
 /**
- *
- * @author David
+ * Fecha 11/11/2015
+ * @author(s) David Díaz Aguilar - 2014004725
+ *            Arturo Luna Izaguirre - 2014110993
  */
 public class ProyectoUNO {
 
@@ -20,6 +21,10 @@ public class ProyectoUNO {
         iniciar();
     }
     
+    /**
+     * Metodo se encarga de iniciar la aplicación
+     * @throws Exception 
+     */
     private static void iniciar() throws Exception{
         partida = Partida.getInstance();
         partida.startApplication();

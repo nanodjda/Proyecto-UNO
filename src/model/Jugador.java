@@ -10,7 +10,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 /**
- *
+ * Esta clase es el modelo de un jugador, cada jugador posee un socket por el 
+ * cual el servidor se comunicará
  * @author(s) David Díaz Aguilar - 2014004725
  *            Arturo Luna Izaguirre - 2014110993
  */
@@ -29,6 +30,22 @@ public class Jugador {
 
     /** Metodos **/
 
+    /**
+     * Este método se encarga de agregar una carta a la mano del jugador
+     * @param pCarta - Carta a agregar
+     */
+    public void addCarta(Carta pCarta) {
+        this.mano.add(pCarta);
+    }
+    
+    /**
+     * Este método se encarga de quitar un carta de la mano del jugador
+     * @param pCarta - Carta a remover
+     */
+    public void removeCarta(Carta pCarta) {
+        this.mano.remove(pCarta);
+    }
+    
     /** Getters & setters **/
     public String getNombre() {
         return nombre;
@@ -40,14 +57,6 @@ public class Jugador {
 
     public ArrayList<Carta> getMano() {
         return mano;
-    }
-
-    public void addCarta(Carta pCarta) {
-        this.mano.add(pCarta);
-    }
-    
-    public void removeCarta(Carta pCarta) {
-        this.mano.remove(pCarta);
     }
 
     public Socket getSocket() {

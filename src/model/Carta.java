@@ -8,8 +8,8 @@ package model;
 
 import util.cartasColores;
 
-/**
- *
+/** 
+ * Modelo de una CARTA
  * @author(s) David Díaz Aguilar - 2014004725
  *            Arturo Luna Izaguirre - 2014110993
  */
@@ -19,11 +19,11 @@ public abstract class Carta {
     /** Variables **/
     private cartasColores color;
     private String texto;
-
-    /** Constructor **/
-    //Clase abstracta
     
     /** Metodos **/
+    /**
+     * Este método se encarga de ejecutar la acción de la carta
+     */
     abstract public void ejecutarAccion();
 
     /** Getters & setters **/

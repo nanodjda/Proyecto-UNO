@@ -18,12 +18,11 @@ import model.CartaComodinTome4;
 import model.CartaReversa;
 import model.CartasFactory;
 import model.Jugador;
-import model.Logica;
 import util.cartasColores;
 import view.UnoView;
 
 /**
- *
+ * Fecha 11/11/2015
  * @author(s) David Díaz Aguilar - 2014004725
  *            Arturo Luna Izaguirre - 2014110993
  */
@@ -32,8 +31,8 @@ public class Partida {
 
     /** Variables **/
     private static Partida INSTANCE = null;
-    private static Logica logica;
     private static UnoView vista;
+    private static ServerSocket server;
     
     private static ArrayList<Jugador> jugadores = new ArrayList();
     private static ArrayList<Carta> mazo = new ArrayList();
@@ -46,20 +45,29 @@ public class Partida {
     private static Boolean cuatroSiguiente = false;
     
     private static int TAMANHO_MANO = 7;
-    private static ServerSocket server;
     
-    /** Constructor **/
+    /**
+     * Se encarga de inicializar la clase partida, crea el servidor y se le 
+     * asigna el puerto 7778
+     * Tambien se crea y asigna una vista al controlador
+     */
     private Partida(){
         try {
             server = new ServerSocket(7778);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        logica = new Logica();
         vista = new UnoView(this.INSTANCE);
     }
 
     /** Metodos **/
+    /**
+     * Este método se encarga de crear el mazo y escoger de forma aleatoria una 
+     * carta con la que se iniciará el juego. Si la carta es un comodín o una 
+     * carta reversa se debe volver a "barajar" el mazo y sacar una nueva.
+     * Por último se reparten las cartas a los jugadores que estén registrados 
+     * en la partida.
+     */
     public static void iniciarPartida(){
         //Creo el mazo y lo desordeno
         mazo = CartasFactory.makeMazo();
@@ -69,12 +77,18 @@ public class Partida {
                 mazo.get(mazo.size() - 1) instanceof CartaComodinTome4 ||
                 mazo.get(mazo.size() - 1) instanceof CartaReversa);
         
+        //Agrego una en descarte y la quito del mazo
         descarte.add(mazo.get(mazo.size() - 1));
         mazo.remove(mazo.size() - 1);
         
+        //Reparto las cartas a los jugadores
         repartirCartas();
     }
     
+    /**
+     * Este método se encarga de repartir las cartas a los jugadores registrados
+     * de acuerdo al tamaño de mano.
+     */
     public static void repartirCartas(){
         for(Jugador pJugador : jugadores){
             for(int i = 0; i < TAMANHO_MANO; i++){
@@ -84,6 +98,12 @@ public class Partida {
         }
     }
     
+    /**
+     * Este método se encarga de enviar mensajes por consola al jugador que se 
+     * le indique en el primer parámetro.
+     * @param pJugador - Jugador a enviar el mensaje
+     * @param pMensaje - Mensaje a enviar al jugador
+     */
     public static void imprimir(Jugador pJugador, String pMensaje){
         try {
             PrintWriter clientOut = new PrintWriter(pJugador.getSocket().getOutputStream(), true);
@@ -93,10 +113,13 @@ public class Partida {
         }
     }
     
+    /**
+     * Este método se encarga de hacer el registro de un jugador.
+     */
     public static void registrarJugador(){
         try {
-            Jugador nuevo = new Jugador();
-            nuevo.setSocket(server.accept());
+            Jugador nuevo = new Jugador(); //Se crea un jugador
+            nuevo.setSocket(server.accept()); //Se espera una conexión por medio de Telnet
             BufferedReader clientIn = new BufferedReader(
                     new InputStreamReader(nuevo.getSocket().getInputStream()));
             imprimir(nuevo, "Digite el nombre de jugador: ");
@@ -109,33 +132,57 @@ public class Partida {
         }
     }
     
+    /**
+     * Este método se encarga de tomar la carta que el usuario elige y la coloca
+     * en el mazo de descarte
+     * @param eleccion - Posición de la carta en la mano
+     */
     public static void usarCarta(int eleccion){
         descarte.add(jugadorActual.getMano().get(eleccion));
         jugadorActual.removeCarta(jugadorActual.getMano().get(eleccion));
     }
     
+    /**
+     * Este método se encarga de comprobar que el mazo no se encuentre vacío, de
+     * ser positivo, se le asigna el mazo de descarte y se rebaraja
+     */
     public static void comprobarMazo(){
-        if(mazo.size() == 0){ //Si se vacía el mazo, se le asignan las cartas de descarte y se "baraja" de nuevo
+        if(mazo.size() == 0){ 
+            Carta cartaActual = getTopeDescarte();
+            descarte.remove(descarte.size() - 1);
             mazo.addAll(descarte);
             Collections.shuffle(mazo);
             descarte.clear();
-            descarte.add(mazo.get(mazo.size() - 1));
-            mazo.remove(mazo.size() - 1);
+            descarte.add(cartaActual);
         }
     }
     
+    /**
+     * Se encarga de cambiar el estado si una carta activa el efecto de SALTO
+     */
     public static void siguientePierdeTurno(){
         saltarTurno = true;
     }
     
+    /**
+     * Se encarga de cambiar el estado si una carta activa el efecto de REVERSA
+     */
     public static void cambiarSentido(){
         reversa = true;
     }
     
+    /**
+     * Se encarga de cambiar el estado si una carta activa el efecto de DOS AL
+     * SIGUIENTE
+     */
     public static void darDosAlSiguiente(){
         dosSiguiente = true;
     }
     
+    /**
+     * Se encarga de cambiar el estado si una carta activa el efecto de CUATRO
+     * AL SIGUIENTE
+     */
     public static void darCuatroAlSiguiente(){
         cuatroSiguiente = true;
     }
@@ -149,10 +196,20 @@ public class Partida {
         pCarta.setColor(pColor);
     }
     
+    /**
+     * Este método se encarga de ejecutar la acción de la carta
+     * @param pCarta - Carta a ejecutar el efecto
+     */
     public static void ejecutarCarta(Carta pCarta){
         pCarta.ejecutarAccion();
     }
     
+    /**
+     * Este método se encarga de comprobar si la elección del usuario es válida
+     * @param pEleccion - Posición en la mano de la carta
+     * @return
+     * @throws Exception 
+     */
     public static Boolean validarEleccion(int pEleccion) throws Exception{
         if(pEleccion < jugadorActual.getMano().size() && pEleccion > -1){
             if(getCarta(pEleccion) instanceof CartaComodin || getCarta(pEleccion) instanceof CartaComodinTome4){
@@ -172,6 +229,10 @@ public class Partida {
         }
     }
     
+    /**
+     * Este método se encarga de "decidir" cual es el siguiente jugador de 
+     * acuerdo a la carta en el top de descarte.
+     */
     public static void siguienteJugador(){
         //Ejecuto la carta en el tope de descarte
         ejecutarCarta(getTopeDescarte());
@@ -182,7 +243,7 @@ public class Partida {
         }
         reversa = false;
         
-        //Se cambia al jugador que tiene el turno
+        //Se cambia del jugador anterior al jugador que ahora tendrá el turno
         if(jugadores.indexOf(jugadorActual) == jugadores.size() - 1){
             jugadorActual = jugadores.get(0);
         } else {
@@ -205,17 +266,22 @@ public class Partida {
                     mazo.remove(mazo.get(mazo.size() - 1));
                 }
             }
-            if(jugadores.indexOf(jugadorActual) == jugadores.size() - 1){
+            if(jugadores.indexOf(jugadorActual) == jugadores.size() - 1){ //Se salta al jugador luego de aplicado el efecto
                 jugadorActual = jugadores.get(0);
             } else {
                 jugadorActual = jugadores.get(jugadores.indexOf(jugadorActual) + 1);
             }
         }
+        //Se "apagan" los efectos
         cuatroSiguiente = false;
         dosSiguiente = false;
         saltarTurno = false;
     }
     
+    /**
+     * Este método se encarga de iniciar la vista de la aplicación
+     * @throws Exception 
+     */
     public void startApplication() throws Exception{
         vista.start();
     }

@@ -10,13 +10,20 @@ import java.util.ArrayList;
 import util.cartasColores;
 
 /**
- *
+ * Esta clase se encarga de proveer Cartas o un Mazo
  * @author(s) David Díaz Aguilar - 2014004725
  *            Arturo Luna Izaguirre - 2014110993
  */
 
 public class CartasFactory {
 
+    /**
+     * Este método crea cartas de acuerdo a los parámetros ingresados
+     * @param pType - Tipo de la carta a crear
+     * @param pColor - Color de la carta a crear
+     * @param pTexto - Texto que poseerá la carta
+     * @return - Carta creada de acuerdo a los parámetros
+     */
     public static Carta makeCarta(String pType, cartasColores pColor, String pTexto) {
         switch (pType) {
             case "N" :
@@ -36,6 +43,10 @@ public class CartasFactory {
         }
     }
     
+    /**
+     * Este método se encarga de crea un mazo completo de UNO
+     * @return - Se retorna un mazo de UNO
+     */
     public static ArrayList<Carta> makeMazo(){
         
         ArrayList<Carta> mazo = new ArrayList();
@@ -53,6 +64,7 @@ public class CartasFactory {
                     color = cartasColores.AZUL;
                 }
                 
+                // Cartas númericas de colores, solo se hacen una vez las de "0"
                 for(int cont = 0; cont < 10; cont++){
                     if(x == 0){
                         mazo.add(makeCarta("N", color, String.valueOf(cont)));
@@ -61,10 +73,13 @@ public class CartasFactory {
                     }
                 }
                 
+                //Cartas especiales que poseen color
                 mazo.add(makeCarta("S", color, "SALTO"));
                 mazo.add(makeCarta("R", color, "REVERSA"));
                 mazo.add(makeCarta("T", color, "TOME 2"));
                 
+                //Cartas comodín, en el primer ciclo se crean los COMODINES normales
+                //Luego los COMODINES TOME 4
                 if(x == 0){
                     mazo.add(makeCarta("C", cartasColores.SINCOLOR, "COMODIN"));
                 } else {
@@ -72,7 +87,6 @@ public class CartasFactory {
                 }
             }
         }
-        
         return mazo;
     }
 
