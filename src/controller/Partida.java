@@ -151,6 +151,12 @@ public class Partida {
             Carta cartaActual = getTopeDescarte();
             descarte.remove(descarte.size() - 1);
             mazo.addAll(descarte);
+            for(Carta pCarta : mazo){
+                if(pCarta instanceof CartaComodin || 
+                   pCarta instanceof CartaComodinTome4){
+                    pCarta.setColor(cartasColores.SINCOLOR);
+                }
+            }
             Collections.shuffle(mazo);
             descarte.clear();
             descarte.add(cartaActual);
@@ -302,6 +308,11 @@ public class Partida {
         return descarte.get(descarte.size() - 1);
     }
     
+    /**
+     * Devuelve la carta elegida por el jugador actual
+     * @param eleccion
+     * @return 
+     */
     public static Carta getCarta(int eleccion){
         return jugadorActual.getMano().get(eleccion);
     }
